@@ -31,6 +31,12 @@ export class CatsController {
     return `This action returns all cats (limit: ${query.limit} items)`;
   }
 
+  @Get('docs')
+  @Redirect('https://docs.nestjs.com', 302)
+  getDocs() {
+    return null;
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string): string {
     return `This action returns a #${id} cat`;
@@ -46,11 +52,5 @@ export class CatsController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return `This action removes a #${id} cat`;
-  }
-
-  @Get('docs')
-  @Redirect('https://docs.nestjs.com', 302)
-  getDocs() {
-    return null;
   }
 }
