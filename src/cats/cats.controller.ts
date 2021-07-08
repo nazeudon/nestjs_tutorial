@@ -1,28 +1,51 @@
-import { Controller, Get, Param, Post, Redirect, Req } from '@nestjs/common';
-import { Request } from 'express';
-
-interface Params {
-  id: number;
-}
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+  Redirect,
+} from '@nestjs/common';
+import { CreateCatDto, ListAllEntities, UpdateCatDto } from './dto/cat.dto';
 
 @Controller('cats')
 export class CatsController {
   @Post()
-  create(): string {
+  async create(@Body() createCatDto: CreateCatDto): Promise<string> {
+    console.log(createCatDto);
+
     return 'This action adds a new cat';
   }
 
-  @Get()
-  findAll(@Req() request: Request): string {
-    console.log(request);
+  // @Get()
+  // findAll(@Req() request: Request): string {
+  //   console.log(request);
+  //   return 'This action returns all cats';
+  // }
 
-    return 'This action returns all cats';
+  @Get()
+  findAll(@Query() query: ListAllEntities) {
+    return `This action returns all cats (limit: ${query.limit} items)`;
   }
 
   @Get(':id')
-  findOne(@Param() params: Params): string {
-    console.log(params.id);
-    return `This action returns a #${params.id} cat`;
+  findOne(@Param('id') id: string): string {
+    return `This action returns a #${id} cat`;
+  }
+
+  @Put(':id')
+  update(@Param('id') id: string, @Body() updateCatDto: UpdateCatDto) {
+    console.log(updateCatDto);
+
+    return `This action updates a #${id} cat`;
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return `This action removes a #${id} cat`;
   }
 
   @Get('docs')
