@@ -1,5 +1,5 @@
 export interface Cat {
   name: string;
-  age: string;
+  age: number;
   bread: string;
 }
