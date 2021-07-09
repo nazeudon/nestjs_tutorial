@@ -6,18 +6,19 @@ import {
   Param,
   Post,
   Put,
-  Query,
   Redirect,
 } from '@nestjs/common';
-import { CreateCatDto, ListAllEntities, UpdateCatDto } from './dto/cat.dto';
+import { CatsService } from './cats.service';
+import { CreateCatDto, UpdateCatDto } from './dto/cat.dto';
+import { Cat } from './interfaces/cat.interface';
 
 @Controller('cats')
 export class CatsController {
-  @Post()
-  async create(@Body() createCatDto: CreateCatDto): Promise<string> {
-    console.log(createCatDto);
+  constructor(private catsService: CatsService) {}
 
-    return 'This action adds a new cat';
+  @Post()
+  async create(@Body() createCatDto: CreateCatDto) {
+    this.catsService.create(createCatDto);
   }
 
   // @Get()
@@ -26,9 +27,14 @@ export class CatsController {
   //   return 'This action returns all cats';
   // }
 
+  // @Get()
+  // findAll(@Query() query: ListAllEntities) {
+  //   return `This action returns all cats (limit: ${query.limit} items)`;
+  // }
+
   @Get()
-  findAll(@Query() query: ListAllEntities) {
-    return `This action returns all cats (limit: ${query.limit} items)`;
+  async findAll(): Promise<Cat[]> {
+    return this.catsService.findAll();
   }
 
   @Get('docs')
