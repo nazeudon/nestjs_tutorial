@@ -2,12 +2,17 @@ import {
   Body,
   Controller,
   Delete,
+  ForbiddenException,
   Get,
+  HttpException,
+  HttpStatus,
   Param,
   Post,
   Put,
   Redirect,
+  UseFilters,
 } from '@nestjs/common';
+import { HttpExceptionFilter } from 'src/filters/http-exception.filter';
 import { CatsService } from './cats.service';
 import { CreateCatDto, UpdateCatDto } from './dto/cat.dto';
 import { Cat } from './interfaces/cat.interface';
@@ -17,7 +22,13 @@ export class CatsController {
   constructor(private catsService: CatsService) {}
 
   @Post()
+  @UseFilters(new HttpExceptionFilter())
   async create(@Body() createCatDto: CreateCatDto) {
+    // UseFiltersはどの条件だと動くのかまだ謎...
+    if (!createCatDto) {
+      throw new ForbiddenException();
+    }
+
     this.catsService.create(createCatDto);
   }
 
@@ -34,7 +45,13 @@ export class CatsController {
 
   @Get()
   async findAll(): Promise<Cat[]> {
-    return this.catsService.findAll();
+    const cats = this.catsService.findAll();
+
+    if (!cats.length) {
+      throw new HttpException('There is NO Cats...', HttpStatus.FORBIDDEN);
+    }
+
+    return cats;
   }
 
   @Get('docs')
