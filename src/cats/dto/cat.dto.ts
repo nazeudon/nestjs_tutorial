@@ -1,3 +1,5 @@
+import { IsString, IsInt } from 'class-validator';
+
 export class CreateCatDto {
   name: string;
   age: number;
@@ -5,8 +7,13 @@ export class CreateCatDto {
 }
 
 export class UpdateCatDto {
+  @IsString()
   name: string;
+
+  @IsInt()
   age: number;
+
+  @IsString()
   bread: string;
 }
 

@@ -7,7 +7,6 @@ import {
   HttpException,
   HttpStatus,
   Param,
-  ParseIntPipe,
   Post,
   Put,
   Redirect,
@@ -16,9 +15,11 @@ import {
 } from '@nestjs/common';
 import { HttpExceptionFilter } from 'src/filters/http-exception.filter';
 import { JoiValidationPipe } from 'src/pipes/validation.pipe';
+import { ParseIntPipe } from 'src/pipes/parse-int.pipe';
 import { CatsService } from './cats.service';
 import { CreateCatDto, UpdateCatDto } from './dto/cat.dto';
 import { Cat } from './interfaces/cat.interface';
+import { createCatSchema } from './schema/cat.schema';
 
 @Controller('cats')
 export class CatsController {
@@ -26,7 +27,7 @@ export class CatsController {
 
   @Post()
   @UseFilters(new HttpExceptionFilter())
-  // @UsePipes(new JoiValidationPipe())
+  @UsePipes(new JoiValidationPipe(createCatSchema))
   async create(@Body() createCatDto: CreateCatDto) {
     // UseFiltersはどの条件だと動くのかまだ謎...
     if (!createCatDto) {
@@ -65,7 +66,7 @@ export class CatsController {
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number): string {
+  async findOne(@Param('id', new ParseIntPipe()) id: number): Promise<string> {
     return `This action returns a #${id} cat`;
   }
 
