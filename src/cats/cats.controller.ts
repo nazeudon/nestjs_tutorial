@@ -37,17 +37,6 @@ export class CatsController {
     this.catsService.create(createCatDto);
   }
 
-  // @Get()
-  // findAll(@Req() request: Request): string {
-  //   console.log(request);
-  //   return 'This action returns all cats';
-  // }
-
-  // @Get()
-  // findAll(@Query() query: ListAllEntities) {
-  //   return `This action returns all cats (limit: ${query.limit} items)`;
-  // }
-
   @Get()
   async findAll(): Promise<Cat[]> {
     const cats = this.catsService.findAll();
