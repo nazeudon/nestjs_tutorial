@@ -11,6 +11,7 @@ import {
   Put,
   Redirect,
   UseFilters,
+  UseGuards,
   UsePipes,
 } from '@nestjs/common';
 import { HttpExceptionFilter } from 'src/filters/http-exception.filter';
@@ -20,12 +21,16 @@ import { CatsService } from './cats.service';
 import { CreateCatDto, UpdateCatDto } from './dto/cat.dto';
 import { Cat } from './interfaces/cat.interface';
 import { createCatSchema } from './schema/cat.schema';
+import { RoleGuard } from 'src/guards/roles.guard';
+import { Roles } from 'src/decorators/roles.decorator';
 
 @Controller('cats')
+@UseGuards(RoleGuard)
 export class CatsController {
   constructor(private catsService: CatsService) {}
 
   @Post()
+  @Roles('admin')
   @UseFilters(new HttpExceptionFilter())
   @UsePipes(new JoiValidationPipe(createCatSchema))
   async create(@Body() createCatDto: CreateCatDto) {
