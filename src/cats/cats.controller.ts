@@ -4,14 +4,13 @@ import {
   Delete,
   ForbiddenException,
   Get,
-  HttpException,
-  HttpStatus,
   Param,
   Post,
   Put,
   Redirect,
   UseFilters,
   UseGuards,
+  UseInterceptors,
   UsePipes,
 } from '@nestjs/common';
 import { HttpExceptionFilter } from 'src/filters/http-exception.filter';
@@ -23,9 +22,12 @@ import { Cat } from './interfaces/cat.interface';
 import { createCatSchema } from './schema/cat.schema';
 import { RoleGuard } from 'src/guards/roles.guard';
 import { Roles } from 'src/decorators/roles.decorator';
+import { LoggingInspector } from 'src/interceptors/logging.interceptor';
+import { TransformInterceptor } from 'src/interceptors/transform.interceptor';
 
 @Controller('cats')
 @UseGuards(RoleGuard)
+@UseInterceptors(LoggingInspector)
 export class CatsController {
   constructor(private catsService: CatsService) {}
 
@@ -43,12 +45,13 @@ export class CatsController {
   }
 
   @Get()
+  @UseInterceptors(TransformInterceptor)
   async findAll(): Promise<Cat[]> {
     const cats = this.catsService.findAll();
 
-    if (!cats.length) {
-      throw new HttpException('There is NO Cats...', HttpStatus.FORBIDDEN);
-    }
+    // if (!cats.length) {
+    //   throw new HttpException('There is NO Cats...', HttpStatus.FORBIDDEN);
+    // }
 
     return cats;
   }
